@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cyber17 | Fake Link Detector</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>🛡️ Cyber17</h1>
+    <p>Detect fake links, phishing websites & online scams</p>
+
+    <form method="POST">
+        <input type="text" name="url" placeholder="Paste link here" required>
+        <button type="submit">Scan</button>
+    </form>
+
+    {% if result %}
+        <div class="result {{ result.status }}">
+            <h2>Status: {{ result.status }}</h2>
+            <ul>
+                {% for reason in result.reasons %}
+                    <li>{{ reason }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</body>
+</html>

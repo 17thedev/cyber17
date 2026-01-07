@@ -1,23 +1,22 @@
-from flask import Flask, render_template, request
-from urllib.parse import urlparse
-import re
 import os
+import re
 from datetime import datetime
+from urllib.parse import urlparse
+
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-# ---------------- CONFIG ----------------
 PHISHING_KEYWORDS = [
     "login", "verify", "secure", "update",
     "account", "confirm", "password", "bank"
 ]
 
 SUSPICIOUS_TLDS = [".xyz", ".top", ".tk", ".ml", ".ga"]
-
 REPORT_DIR = "reports"
 os.makedirs(REPORT_DIR, exist_ok=True)
 
-# ---------------- LOGIC ----------------
+
 def analyze_url(url):
     parsed = urlparse(url)
     issues = []
@@ -35,7 +34,7 @@ def analyze_url(url):
 
     for word in PHISHING_KEYWORDS:
         if word in domain:
-            issues.append(f"Phishing keyword detected: '{word}'")
+            issues.append(f"Phishing keyword detected: {word}")
             score += 1
 
     for tld in SUSPICIOUS_TLDS:
@@ -50,90 +49,43 @@ def analyze_url(url):
     if len(domain) > 35:
         issues.append("Domain length unusually long")
         score += 1
-v
-    risk = "Low"
-    if score >= 5:
-        risk = "High"
-    elif score >= 3:
+
+    if score <= 2:
+        risk = "Low"
+    elif score <= 5:
         risk = "Medium"
+    else:
+        risk = "High"
 
     return issues, risk
 
-def save_report(url, issues, risk):
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    filename = f"{REPORT_DIR}/scan_{timestamp}.txt"
-
-    with open(filename, "w") as f:
-        f.write("Cyber17 Scan Report\n")
-        f.write("=" * 30 + "\n")
-        f.write(f"URL: {url}\n")
-        f.write(f"Risk Level: {risk}\n\n")
-        f.write("Issues Detected:\n")
-
-        if issues:
-            for issue in issues:
-                f.write(f"- {issue}\n")
-        else:
-            f.write("- No obvious threats detected\n")
-
-# ---------------- ROUTES ----------------
-@app.route("/", methods=["GET", "POST"])
-def index():
-    result = None
-    risk = None
-
-    if request.method == "POST":
-        url = request.form.get("url")
-        result, risk = analyze_url(url)
-        save_report(url, result, risk)
-
-    return render_template("index.html", result=result, risk=risk)
-
-# ---------------- RUN ----------------
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
-
-# ---------------- RUN ----------------
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
-# ---------------- ROUTES ----------------
-from flask import render_template
 
 def save_report(url, issues, risk):
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    filename = f"{REPORT_DIR}/scan_{timestamp}.txt"
+    ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    path = f"{REPORT_DIR}/scan_{ts}.txt"
 
-    with open(filename, "w") as f:
-        f.write("Cyber17 Scan Report\n")
-        f.write("=" * 30 + "\n")
+    with open(path, "w") as f:
         f.write(f"URL: {url}\n")
-        f.write(f"Risk Level: {risk}\n\n")
-        f.write("Issues Detected:\n")
-
-        if issues:
-            for issue in issues:
-                f.write(f"- {issue}\n")
-        else:
-            f.write("- No obvious threats detected\n")
+        f.write(f"Risk: {risk}\n")
+        f.write("Issues:\n")
+        for issue in issues:
+            f.write(f"- {issue}\n")
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    result = None
+    issues = None
     risk = None
 
     if request.method == "POST":
         url = request.form.get("url")
-        result, risk = analyze_url(url)
-        save_report(url, result, risk)
+        issues, risk = analyze_url(url)
+        save_report(url, issues, risk)
 
-    return render_template("index.html", result=result, risk=risk)
+    return render_template("index.html", issues=issues, risk=risk)
 
 
-# ---------------- RUN ----------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+

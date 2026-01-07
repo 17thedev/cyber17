@@ -1,69 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cyber17 – Fake Link Detector</title>
-    <style>
-        body {
-            background: #0d1117;
-            color: #c9d1d9;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 40px;
-        }
-        input {
-            width: 80%;
-            padding: 12px;
-            border-radius: 6px;
-            border: none;
-        }
-        button {
-            padding: 12px 20px;
-            margin-top: 10px;
-            background: #238636;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .box {
-            margin-top: 30px;
-            background: #161b22;
-            padding: 20px;
-            border-radius: 8px;
-        }
-        .high { color: #ff4d4d; }
-        .medium { color: #ffcc00; }
-        .low { color: #3fb950; }
-    </style>
+  <title>Cyber17</title>
 </head>
 <body>
+  <h1>Cyber17 – Fake Link Detector</h1>
 
-<h1>🔐 Cyber17 Fake Link Detector</h1>
-<p>Check links for phishing & impersonation risks</p>
+  <form method="POST">
+    <input type="text" name="url" placeholder="Enter URL" required>
+    <button type="submit">Scan</button>
+  </form>
 
-<form method="POST">
-    <input type="text" name="url" placeholder="https://example.com" required>
-    <br>
-    <button type="submit">Analyze Link</button>
-</form>
+  {% if risk %}
+    <h2>Risk: {{ risk }}</h2>
+  {% endif %}
 
-{% if result %}
-<div class="box">
-    <h3>Risk Level:
-        <span class="{{ risk|lower }}">{{ risk }}</span>
-    </h3>
+  {% if issues %}
     <ul>
-        {% for issue in result %}
-       
-     <li>{{ issue }}</li>
-        {% else %}
-            <li>No obvious threats detected</li>
-        {% endfor %}
+      {% for issue in issues %}
+        <li>{{ issue }}</li>
+      {% endfor %}
     </ul>
-</div>
-{% endif %}
-
+  {% endif %}
 </body>
 </html>
-
-

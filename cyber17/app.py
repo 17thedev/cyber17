@@ -50,7 +50,7 @@ def analyze_url(url):
     if len(domain) > 35:
         issues.append("Domain length unusually long")
         score += 1
-
+v
     risk = "Low"
     if score >= 5:
         risk = "High"
@@ -93,6 +93,44 @@ def index():
 if __name__ == "__main__":
     app.run(debug=True)
 
+
+
+# ---------------- RUN ----------------
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+# ---------------- ROUTES ----------------
+from flask import render_template
+
+def save_report(url, issues, risk):
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    filename = f"{REPORT_DIR}/scan_{timestamp}.txt"
+
+    with open(filename, "w") as f:
+        f.write("Cyber17 Scan Report\n")
+        f.write("=" * 30 + "\n")
+        f.write(f"URL: {url}\n")
+        f.write(f"Risk Level: {risk}\n\n")
+        f.write("Issues Detected:\n")
+
+        if issues:
+            for issue in issues:
+                f.write(f"- {issue}\n")
+        else:
+            f.write("- No obvious threats detected\n")
+
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    result = None
+    risk = None
+
+    if request.method == "POST":
+        url = request.form.get("url")
+        result, risk = analyze_url(url)
+        save_report(url, result, risk)
+
+    return render_template("index.html", result=result, risk=risk)
 
 
 # ---------------- RUN ----------------

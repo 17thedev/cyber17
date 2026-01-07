@@ -1,65 +1,23 @@
-import re
-import socket
-import requests
-from urllib.parse import urlparse
-import tldextract
+import subprocess
 
-SUSPICIOUS_KEYWORDS = [
-    "login", "verify", "secure", "account",
-    "update", "free", "bonus", "confirm", "bank"
-]
+def scan_target(target, ports=None):
+    """
+    Scan a target IP or subnet using nmap.
+    :param target: IP address or subnet (e.g. 192.168.1.1 or 192.168.1.0/24)
+    :param ports: Optional string like '22,80,443'
+    :return: Scan result as text
+    """
 
-def is_ip_address(domain):
+    command = ["nmap", "-sV"]
+
+    if ports:
+        command.extend(["-p", ports])
+
+    command.append(target)
+
     try:
-        socket.inet_aton(domain)
-        return True
-    except:
-        return False
+        result = subprocess.check_output(command, stderr=subprocess.STDOUT)
+        return result.decode()
+    except subprocess.CalledProcessError as e:
+        return f"Scan failed:\n{e.output.decode()}"
 
-def scan_url(url):
-    score = 0
-    reasons = []
-
-    parsed = urlparse(url)
-    domain = parsed.netloc
-
-    # HTTPS check
-    if not url.startswith("https://"):
-        score += 2
-        reasons.append("Website does not use HTTPS")
-
-    # IP address check
-    if is_ip_address(domain):
-        score += 3
-        reasons.append("URL uses IP address instead of domain")
-
-    # Keyword check
-    for word in SUSPICIOUS_KEYWORDS:
-        if word in url.lower():
-            score += 1
-            reasons.append(f"Suspicious keyword detected: {word}")
-
-    # URL length
-    if len(url) > 75:
-        score += 1
-        reasons.append("Unusually long URL")
-
-    # Typosquatting check
-    extracted = tldextract.extract(domain)
-    if len(extracted.domain) < 4:
-        score += 1
-        reasons.append("Suspicious domain structure")
-
-    # Final verdict
-    if score >= 5:
-        status = "Dangerous"
-    elif score >= 3:
-        status = "Suspicious"
-    else:
-        status = "Safe"
-
-    return {
-        "status": status,
-        "score": score,
-        "reasons": reasons
-    }

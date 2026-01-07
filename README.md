@@ -1,22 +1,30 @@
-# Cyber17 Network Audit Tool
+# 🔐 Cyber17 – Fake Link & Phishing Detector
 
-A lightweight network auditing and scanning tool built with Python and Flask.
-Designed for educational and ethical cybersecurity testing.
+Cyber17 is a beginner-friendly cybersecurity web tool built with **Python + Flask**.  
+It helps users analyze URLs and detect **potential phishing, impersonation, and unsafe links**.
 
-## Features
-- Network host discovery (Nmap)
-- Open port scanning
-- DNS service detection
-- Web-based interface (Flask)
+Built and tested on **Android (Termux)** but works on Linux & Windows too.
 
-## Tech Stack
+---
+
+## 🚀 Features
+- Fake / phishing link detection
+- Phishing keyword analysis
+- Suspicious TLD detection (.xyz, .tk, .ml, etc.)
+- HTTP vs HTTPS security check
+- Risk level scoring (Low / Medium / High)
+- Automatic scan reports saved to files
+- Mobile-friendly web interface
+
+---
+
+## 🖥️ Tech Stack
 - Python 3
 - Flask
-- Nmap
-- HTML/CSS
+- HTML & CSS
+- Runs locally (no internet required)
 
-## Usage
-```bash
-python app.py
+---
 
+## 📂 Project Structure
 

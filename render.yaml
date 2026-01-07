@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: cyber17
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn cyber17.app:app

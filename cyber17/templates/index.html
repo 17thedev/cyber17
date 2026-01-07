@@ -1,26 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Cyber17</title>
+    <meta charset="UTF-8">
+    <title>Cyber17 – Fake Link Detector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #020617;
+            padding: 20px;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+        }
+
+        h1 {
+            text-align: center;
+            color: #38bdf8;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: none;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #38bdf8;
+            color: #020617;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0ea5e9;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background: #020617;
+            border-radius: 6px;
+            border-left: 4px solid #38bdf8;
+        }
+
+        .risk-low { border-left-color: #22c55e; }
+        .risk-medium { border-left-color: #facc15; }
+        .risk-high { border-left-color: #ef4444; }
+    </style>
 </head>
 <body>
-  <h1>Cyber17 – Fake Link Detector</h1>
 
-  <form method="POST">
-    <input type="text" name="url" placeholder="Enter URL" required>
-    <button type="submit">Scan</button>
-  </form>
+<div class="container">
+    <h1>Cyber17</h1>
 
-  {% if risk %}
-    <h2>Risk: {{ risk }}</h2>
-  {% endif %}
+    <form method="POST">
+        <input type="text" name="url" placeholder="Enter URL to scan" required>
+        <button type="submit">Scan</button>
+    </form>
 
-  {% if issues %}
-    <ul>
-      {% for issue in issues %}
-        <li>{{ issue }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+    {% if result %}
+    <div class="result risk-{{ result.risk|lower }}">
+        <strong>Risk:</strong> {{ result.risk }}<br>
+        <strong>Score:</strong> {{ result.score }}<br><br>
+
+        {% if result.issues %}
+            <strong>Issues found:</strong>
+            <ul>
+                {% for issue in result.issues %}
+                <li>{{ issue }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            No suspicious signs detected.
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
 </body>
 </html>
